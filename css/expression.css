@@ -1,0 +1,2 @@
+body { padding: 20px; }
+div#alert-error, div#alert-success { display: none; }
