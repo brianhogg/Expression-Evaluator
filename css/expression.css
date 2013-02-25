@@ -1,2 +1,4 @@
 body { padding: 20px; }
-div#alert-error, div#alert-success { display: none; }
+div#alert-error, div#alert-success, li#result-template { display: none; }
+ul#results > li { float: left; }
+ul#results li ul.dropdown-menu li { padding: 0 5px; cursor: pointer; }

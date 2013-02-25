@@ -5,7 +5,9 @@ class Expression {
 
     public static function evaluate( $expression ) {
         $expression = trim($expression);
-        if ( is_numeric($expression) ) {
+        if ( 'INF' == $expression or ( is_numeric( $expression ) and is_infinite( $expression ) ) )
+            throw new Exception('Invalid expression - result too large');
+        elseif ( is_numeric($expression) ) {
             if ( is_nan($expression) )
                 throw new Exception('Invalid expression - not a number');
             else

@@ -55,12 +55,26 @@ class ExpressionTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, Expression::evaluate('(1+1)'));
     }
 
+    public function testInfiniteCheck() {
+        $large_result = pow(23423423, 23423423);
+        $this->assertTrue(is_numeric($large_result));
+        $this->assertTrue(is_infinite($large_result));
+    }
+
     public function testPrecedenceWithBrackets() {
         $this->assertEquals(16, Expression::evaluate('2*(2+2)*2'));
     }
 
     public function testNestedBrackets() {
         $this->assertEquals(6, Expression::evaluate('2*(2+(2/2))'));
+    }
+
+    public function testOverflow() {
+        try {
+            Expression::evaluate('235423432^234098324');
+        } catch ( Exception $e ) {
+            $this->assertEquals('Invalid expression - result too large', $e->getMessage());
+        }
     }
 
     /**
