@@ -93,6 +93,14 @@ class ExpressionTest extends PHPUnit_Framework_TestCase {
     /**
      * @expectedException Exception
      */
+    public function testInvalidPower() {
+        $result = Expression::evaluate('-1^5.5');
+        var_dump($result);
+    }
+
+    /**
+     * @expectedException Exception
+     */
     public function testDivideByZero() {
         Expression::evaluate('1/0');
     }
