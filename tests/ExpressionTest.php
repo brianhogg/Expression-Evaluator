@@ -48,7 +48,13 @@ class ExpressionTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testPrecedence() {
-        $this->assertEquals(8, Expression::evaluate('2*2+2*2'));
+        $this->assertEquals(13, Expression::evaluate('2*2+3*3'));
+    }
+
+    public function testNegativeNumbers() {
+        $this->assertEquals(-1, Expression::evaluate('2+(-3)'));
+        $this->assertEquals(1, Expression::evaluate('-1+2'));
+        $this->assertEquals(-3, Expression::evaluate('-1-2'));
     }
 
     public function testBracketsAroundExpression() {
@@ -124,5 +130,9 @@ class ExpressionTest extends PHPUnit_Framework_TestCase {
      */
     public function testInvalidExpression() {
         Expression::evaluate('alksdjf');
+    }
+
+    public function testReplacementOfExpression() {
+        $this->assertEquals(48, Expression::evaluate('2*2+2*22'));
     }
 }

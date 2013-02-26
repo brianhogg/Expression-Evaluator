@@ -26,38 +26,70 @@ class Expression {
             }
         } else {
             foreach ( self::$_operators as $operator ) {
-                if ( FALSE !== strpos( $expression, $operator ) )
+                if ( FALSE !== strpos( $expression, $operator, 1 ) )
                     return self::evaluate_operator_expression( $expression, $operator );
             }
             throw new Exception('Invalid expression');
         }
     }
 
+    public static function get_position_of_next_operator( $operator_position, $expression ) {
+        $retval = false;
+        foreach ( self::$_operators as $operator ) {
+            $position = strpos( $expression, $operator, $operator_position + 1 );
+            if ( FALSE !== $position and $position != strlen( $expression ) and $position != ( $operator_position + 1 ) and ( false === $retval or $position < $retval ) ) {
+                $retval = $position;
+            }
+        }
+        return $retval;
+    }
+
+    public static function get_position_of_previous_operator( $operator_position, $expression ) {
+        $retval = false;
+        foreach ( self::$_operators as $operator ) {
+            $position = strrpos( substr( $expression, 0, $operator_position ), $operator );
+            if ( FALSE !== $position and 0 != $position and $position != ( $operator_position - 1 ) and ( false === $retval or $position > $retval ) ) {
+                $retval = $position;
+            }
+        }
+        return $retval;
+    }
+
     public static function evaluate_operator_expression( $expression, $operator ) {
-        $left_side = substr( $expression, 0, strpos( $expression, $operator ) );
-        $right_side = self::evaluate( substr( $expression, strpos( $expression, $operator ) + 1 ) );
+        $operator_position = strpos( $expression, $operator, 1 );
+        $preceding_operator_position = self::get_position_of_previous_operator( $operator_position, $expression );
+        $next_operator_position = self::get_position_of_next_operator( $operator_position, $expression );
+        if ( false === $preceding_operator_position )
+            $left_side_of_operator = substr( $expression, 0, $operator_position );
+        else
+            $left_side_of_operator = substr( $expression, $preceding_operator_position + 1, $operator_position - $preceding_operator_position - 1 );
+        if ( false === $next_operator_position )
+            $right_side_of_operator = substr( $expression, $operator_position + 1 );
+        else
+            $right_side_of_operator = substr( $expression, $operator_position + 1, $next_operator_position - $operator_position - 1 );
         switch ( $operator ) {
             case '^':
-                $retval = pow( $left_side, $right_side );
+                $result = pow( self::evaluate( $left_side_of_operator ), self::evaluate( $right_side_of_operator ) );
                 break;
             case '/':
-                if ( 0 == $right_side )
+                if ( 0 == self::evaluate( $right_side_of_operator ) )
                     throw new Exception('Cannot divide by zero');
                 else
-                    $retval = $left_side / $right_side;
+                    $result = self::evaluate( $left_side_of_operator ) / self::evaluate( $right_side_of_operator );
                 break;
             case '*':
-                $retval = $left_side * $right_side;
+                $result = self::evaluate( $left_side_of_operator ) * self::evaluate( $right_side_of_operator );
                 break;
             case '+':
-                $retval = $left_side + $right_side;
+                $result = self::evaluate( $left_side_of_operator ) + self::evaluate( $right_side_of_operator );
                 break;
             case '-':
-                $retval = $left_side - $right_side;
+                $result = self::evaluate( $left_side_of_operator ) - self::evaluate( $right_side_of_operator );
                 break;
             default:
                 throw new Exception('Invalid operator');
         }
-        return self::evaluate( $retval );
+        $expression = substr_replace( $expression, $result, $operator_position - strlen( $left_side_of_operator ), strlen( $left_side_of_operator . $operator . $right_side_of_operator ) );
+        return self::evaluate( $expression );
     }
 }
