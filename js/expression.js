@@ -55,6 +55,14 @@ var ExpressionEvaluator = {
             }
             me.results = [];
         } );
+
+        $(document).ajaxStart(function() {
+            $('#evaluate').attr('disable', 'disable');
+        });
+
+        $(document).ajaxStop(function() {
+            $('#evaluate').removeAttr('disable');
+        });
     },
 
     evaluate: function(expression) {
