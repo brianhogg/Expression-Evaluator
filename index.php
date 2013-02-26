@@ -8,6 +8,7 @@
 </head>
 <body>
     <h1>Expression Evaluator</h1>
+    <h5>by Brian Hogg</h5>
     <p class="lead">
         Enter a basic mathematical expression below to evaluate.  Supports <strong>basic operators</strong> (*, /, +, -), <strong>exponential</strong> (^) and <strong>brackets</strong>.
     </p>
